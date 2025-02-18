@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <QueryClientProvider client={queryClient}>
       <main className="min-h-screen bg-white">
-        <div className="max-w-2xl mx-auto px-4 py-8">
+        <div className="max-w-xl mx-auto px-4 py-8">
           <h1>Автоматизация, расшифровка, обобщение и постановка задач из видео-конференций</h1>
           <p className="text-center mb-8">
             Прикрепите файл видео-конференции и нажмите "Обработать".<br />

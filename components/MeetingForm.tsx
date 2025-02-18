@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { translations } from '@/lib/translations';
+import styled from 'styled-components';
 
 interface Participant {
   name: string;
@@ -16,6 +17,11 @@ interface MeetingFormProps {
   onSubmit: () => void;
   isProcessing: boolean;
 }
+
+const FormContainer = styled.div`
+  max-width: 100%;
+  margin: 0 auto;
+`
 
 export function MeetingForm({
   title,
@@ -38,7 +44,7 @@ export function MeetingForm({
   };
 
   return (
-    <div className="form-container">
+    <FormContainer>
       <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }}>
         <div className="form-section">
           <label htmlFor="title" className="form-label">
@@ -117,6 +123,6 @@ export function MeetingForm({
           {isProcessing ? translations.meetingForm.submit.processing : translations.meetingForm.submit.process}
         </button>
       </form>
-    </div>
+    </FormContainer>
   );
 } 

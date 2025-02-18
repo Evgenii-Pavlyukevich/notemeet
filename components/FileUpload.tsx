@@ -38,7 +38,7 @@ export function FileUpload({ file, onFileChange }: FileUploadProps) {
   return (
     <div
       {...getRootProps()}
-      className={`upload-area ${isDragActive ? 'border-gray-400 bg-gray-50' : ''}`}
+      className={`upload-area ${isDragActive ? 'drag-active' : ''}`}
     >
       <input {...getInputProps()} />
       <div className="upload-icon">
