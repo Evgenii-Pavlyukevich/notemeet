@@ -79,6 +79,55 @@ const SummaryText = styled.p`
   }
 `;
 
+const ParticipantGroup = styled.div`
+  margin-bottom: 2rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const ParticipantHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const ParticipantAvatar = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: black;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+`;
+
+const ParticipantInfo = styled.div`
+  flex: 1;
+`;
+
+const ParticipantName = styled.h3`
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+
+  @media (min-width: 768px) {
+    font-size: 1.125rem;
+  }
+`;
+
+const ParticipantPosition = styled.p`
+  font-size: 0.875rem;
+  color: var(--placeholder-color);
+  margin: 0;
+`;
+
 const List = styled.ul`
   list-style: none;
   padding: 0;
@@ -139,11 +188,19 @@ const EmptyState = styled.p`
   }
 `;
 
+interface Task {
+  text: string;
+  assignee?: {
+    name: string;
+    position: string;
+  };
+}
+
 interface ResultsProps {
   transcription?: string;
   summary?: string;
   decisions?: string[];
-  actionItems?: string[];
+  actionItems?: Task[];
   followUps?: string[];
   deadlines?: string[];
 }
@@ -182,6 +239,54 @@ export function Results({
     );
   };
 
+  const renderTasksByParticipant = (tasks: Task[] | undefined, emptyMessage: string) => {
+    if (!tasks?.length) {
+      return <EmptyState>{emptyMessage}</EmptyState>;
+    }
+
+    // Group tasks by participant
+    const tasksByParticipant: { [key: string]: { tasks: Task[]; position: string } } = {};
+    
+    tasks.forEach(task => {
+      if (task.assignee) {
+        const key = task.assignee.name;
+        if (!tasksByParticipant[key]) {
+          tasksByParticipant[key] = {
+            tasks: [],
+            position: task.assignee.position
+          };
+        }
+        tasksByParticipant[key].tasks.push(task);
+      }
+    });
+
+    return (
+      <>
+        {Object.entries(tasksByParticipant).map(([name, { tasks, position }]) => (
+          <ParticipantGroup key={name}>
+            <ParticipantHeader>
+              <ParticipantAvatar>
+                {name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2)}
+              </ParticipantAvatar>
+              <ParticipantInfo>
+                <ParticipantName>{name}</ParticipantName>
+                <ParticipantPosition>{position}</ParticipantPosition>
+              </ParticipantInfo>
+            </ParticipantHeader>
+            <List>
+              {tasks.map((task, index) => (
+                <ListItem key={index}>
+                  <ItemNumber>{index + 1}</ItemNumber>
+                  <ItemText>{task.text}</ItemText>
+                </ListItem>
+              ))}
+            </List>
+          </ParticipantGroup>
+        ))}
+      </>
+    );
+  };
+
   return (
     <ResultsContainer>
       <TabsContainer>
@@ -214,7 +319,7 @@ export function Results({
         )}
 
         {activeTab === 'actions' && (
-          renderList(actionItems, translations.results.noData.actions)
+          renderTasksByParticipant(actionItems, translations.results.noData.actions)
         )}
       </ContentSection>
     </ResultsContainer>
