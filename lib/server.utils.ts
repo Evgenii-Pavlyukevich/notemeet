@@ -43,8 +43,8 @@ const transcribeAudio = async (file: File): Promise<{ text: string }> => {
     const response = await client.audio.transcriptions.create({
       file: file,
       model: 'whisper-1',
-      response_format: 'text',
-    }) as unknown as string;
+      response_format: 'srt',
+    }) as string;
 
     return { text: response };
   } catch (error) {
@@ -64,38 +64,43 @@ const analyzeMeeting = async (
     return new Promise((res) => setTimeout(() => res(MOCK_ANALYSIS as MeetingAnalysis), 1000));
   }
 
-  const analysisPrompt = `
-    Meeting Title: ${title}
-    Business Context: ${context}
-    Participants: ${participants.map((p) => `${p.name} (${p.position})`).join(', ')}
-    
-    Transcription: ${transcription.text}
-    
-    Please analyze this meeting and provide:
-    1. A brief summary
-    2. Key decisions made
-    3. Action items with assigned responsibilities
-    4. Follow-up tasks
-    5. Important deadlines mentioned
-  `;
+  try {
+    const analysisPrompt = `
+      Meeting Title: ${title}
+      Business Context: ${context}
+      Participants: ${participants.map((p) => `${p.name} (${p.position})`).join(', ')}
+      
+      Transcription: ${transcription.text}
+      
+      Please analyze this meeting and provide:
+      1. A brief summary
+      2. Key decisions made
+      3. Action items with assigned responsibilities
+      4. Follow-up tasks
+      5. Important deadlines mentioned
+    `;
 
-  const { object } = await generateObject({
-    model: metadataModel,
-    schema: meetingAnalysisSchema,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: analysisPrompt,
-          },
-        ],
-      },
-    ],
-  });
+    const { object } = await generateObject({
+      model: metadataModel,
+      schema: meetingAnalysisSchema,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: analysisPrompt,
+            },
+          ],
+        },
+      ],
+    });
 
-  return object as MeetingAnalysis;
+    return object as MeetingAnalysis;
+  } catch (error) {
+    console.error('Analysis error:', error);
+    throw new Error('Failed to analyze meeting');
+  }
 };
 
 export const generateResponse = async (
@@ -104,18 +109,23 @@ export const generateResponse = async (
   context: string,
   participants: { name: string; position: string }[]
 ): Promise<MeetingResult> => {
-  const transcribedAudio = await transcribeAudio(file);
-  console.log('🚀 ~ generateResponse ~ transcribedAudio:', transcribedAudio);
+  try {
+    const transcribedAudio = await transcribeAudio(file);
+    console.log('🚀 ~ generateResponse ~ transcribedAudio:', transcribedAudio);
 
-  const analysis: MeetingAnalysis = await analyzeMeeting(transcribedAudio, title, context, participants);
-  console.log('🚀 ~ generateResponse ~ analysis:', analysis);
+    const analysis: MeetingAnalysis = await analyzeMeeting(transcribedAudio, title, context, participants);
+    console.log('🚀 ~ generateResponse ~ analysis:', analysis);
 
-  return {
-    transcription: transcribedAudio.text,
-    summary: analysis.summary,
-    decisions: analysis.decisions,
-    actionItems: analysis.actionItems,
-    followUps: analysis.followUps,
-    deadlines: analysis.deadlines,
-  };
+    return {
+      transcription: transcribedAudio.text,
+      summary: analysis.summary,
+      decisions: analysis.decisions,
+      actionItems: analysis.actionItems,
+      followUps: analysis.followUps,
+      deadlines: analysis.deadlines,
+    };
+  } catch (error) {
+    console.error('Response generation error:', error);
+    throw error;
+  }
 }; 
