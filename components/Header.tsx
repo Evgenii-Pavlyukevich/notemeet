@@ -39,19 +39,13 @@ const Header = () => {
     <HeaderContainer>
       <HeaderContent>
         <LogoContainer>
-          <picture>
-            <source
-              media="(min-width: 768px)"
-              srcSet="/Logo.png"
-            />
-            <StyledImage
-              src="/Group 30.png"
-              alt="VideoNotes Logo"
-              fill
-              priority
-              sizes="(min-width: 768px) 130px, 105px"
-            />
-          </picture>
+          <StyledImage
+            src="/Group 30.png"
+            alt="VideoNotes Logo"
+            fill
+            priority
+            sizes="(min-width: 768px) 130px, 105px"
+          />
         </LogoContainer>
       </HeaderContent>
     </HeaderContainer>
