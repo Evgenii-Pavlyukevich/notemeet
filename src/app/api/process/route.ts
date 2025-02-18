@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { validateFile, transcribeAudio, analyzeMeeting } from '@/lib/server.utils';
+import { validateFile, generateResponse } from '@/lib/server.utils';
 
 export const maxDuration = 300; // 5 minutes
 
@@ -26,24 +26,15 @@ export async function POST(request: Request) {
     }
 
     // Validate file
-    try {
-      validateFile(file);
-    } catch (error: any) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+    const validationError = validateFile(file);
+    if (validationError) {
+      return validationError;
     }
 
-    // Process in steps
-    const transcription = await transcribeAudio(file);
     const participants = JSON.parse(participantsStr);
-    const analysis = await analyzeMeeting(transcription, title, context, participants);
+    const result = await generateResponse(file, title, context, participants);
 
-    return NextResponse.json({
-      transcription,
-      ...analysis,
-    });
+    return NextResponse.json(result);
   } catch (error: any) {
     console.error('Processing error:', error);
     return NextResponse.json(
