@@ -36,22 +36,22 @@ export function FileUpload({ file, onFileChange }: FileUploadProps) {
   });
 
   return (
-    <div className="notion-card p-6">
-      <div
-        {...getRootProps()}
-        className={`notion-block cursor-pointer transition-all duration-150 ease-out
-          ${isDragActive ? 'border-2 border-dashed border-accent-blue bg-hover-bg' : ''}`}
-      >
-        <input {...getInputProps()} />
-        <div className="space-y-2">
-          <p className="text-text-primary">
-            {file ? `${translations.fileUpload.selectedFile} ${file.name}` : translations.fileUpload.dragAndDrop}
-          </p>
-          <p className="text-sm opacity-60">
-            {translations.fileUpload.supportedFormats}
-          </p>
-        </div>
+    <div
+      {...getRootProps()}
+      className={`upload-area ${isDragActive ? 'border-gray-400 bg-gray-50' : ''}`}
+    >
+      <input {...getInputProps()} />
+      <div className="upload-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 4v16m-8-8h16" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
       </div>
+      <p className="upload-text">
+        {file ? `${translations.fileUpload.selectedFile} ${file.name}` : translations.fileUpload.dragAndDrop}
+      </p>
+      <p className="upload-subtext">
+        {translations.fileUpload.supportedFormats}
+      </p>
     </div>
   );
 } 

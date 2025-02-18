@@ -38,10 +38,10 @@ export function MeetingForm({
   };
 
   return (
-    <div className="notion-card p-6">
-      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-6">
-        <div className="notion-block">
-          <label htmlFor="title" className="block text-sm mb-2">
+    <div className="form-container">
+      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }}>
+        <div className="form-section">
+          <label htmlFor="title" className="form-label">
             {translations.meetingForm.title}
           </label>
           <input
@@ -49,13 +49,13 @@ export function MeetingForm({
             id="title"
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
-            className="notion-input"
+            className="form-input"
             required
           />
         </div>
 
-        <div className="notion-block">
-          <label htmlFor="context" className="block text-sm mb-2">
+        <div className="form-section">
+          <label htmlFor="context" className="form-label">
             {translations.meetingForm.context}
           </label>
           <textarea
@@ -63,23 +63,18 @@ export function MeetingForm({
             rows={3}
             value={context}
             onChange={(e) => onContextChange(e.target.value)}
-            className="notion-input"
+            className="form-input"
             required
           />
+          <p className="example-text">
+            Пример: Компания с 30 сотрудниками помогает любителям кошек лучше ухаживать за их питомцами благодаря умным роботам, которые развлекают и кормят кошку, когда хозяина нет дома.
+          </p>
         </div>
 
-        <div className="notion-block">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg">{translations.meetingForm.participants.title}</h3>
-            <button
-              type="button"
-              onClick={addParticipant}
-              className="notion-button text-sm"
-            >
-              {translations.meetingForm.participants.addParticipant}
-            </button>
-          </div>
-
+        <div className="form-section">
+          <label className="form-label">
+            {translations.meetingForm.participants.title}
+          </label>
           <div className="space-y-4">
             {participants.map((participant, index) => (
               <div key={index} className="flex gap-4">
@@ -88,7 +83,7 @@ export function MeetingForm({
                   placeholder={translations.meetingForm.participants.name}
                   value={participant.name}
                   onChange={(e) => updateParticipant(index, 'name', e.target.value)}
-                  className="notion-input"
+                  className="form-input"
                   required
                 />
                 <input
@@ -96,18 +91,28 @@ export function MeetingForm({
                   placeholder={translations.meetingForm.participants.position}
                   value={participant.position}
                   onChange={(e) => updateParticipant(index, 'position', e.target.value)}
-                  className="notion-input"
+                  className="form-input"
                   required
                 />
               </div>
             ))}
           </div>
+          <button
+            type="button"
+            onClick={addParticipant}
+            className="text-sm text-blue-600 hover:text-blue-500 mt-2"
+          >
+            {translations.meetingForm.participants.addParticipant}
+          </button>
+          <p className="example-text">
+            Пример: Иванов Иван Иванович - фронтенд разработчик, Петров Петр Петрович - бизнес аналитик.
+          </p>
         </div>
 
         <button
           type="submit"
           disabled={isProcessing}
-          className={`notion-button w-full ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className="submit-button"
         >
           {isProcessing ? translations.meetingForm.submit.processing : translations.meetingForm.submit.process}
         </button>

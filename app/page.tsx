@@ -13,11 +13,19 @@ const queryClient = new QueryClient();
 export default function Home() {
   return (
     <QueryClientProvider client={queryClient}>
-      <main className="min-h-screen bg-bg-color">
-        <div className="max-w-5xl mx-auto px-4 py-8 md:px-8 md:py-12">
-          <div className="notion-block mb-8">
-            <h1 className="text-text-primary">{translations.title}</h1>
-          </div>
+      <main className="min-h-screen bg-white">
+        <div className="max-w-2xl mx-auto px-4 py-8">
+          <h1>Автоматизация, расшифровка, обобщение и постановка задач из видео-конференций</h1>
+          <p className="text-center mb-8">
+            Прикрепите файл видео-конференции и нажмите "Обработать".<br />
+            Через пару минут Вы получите:
+          </p>
+          <ul className="list-disc pl-8 mb-8 space-y-2">
+            <li>текстовую расшифровку;</li>
+            <li>тезисное резюме с содержательными выжимками основных моментов;</li>
+            <li>таймкоды основных моментов;</li>
+            <li>список задач, поставленных каждому из присутствующих на встрече сотрудников.</li>
+          </ul>
           <MeetingProcessor />
         </div>
         <Toaster 
