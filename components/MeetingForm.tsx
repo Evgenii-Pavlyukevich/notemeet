@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { translations } from '@/lib/translations';
 
 interface Participant {
   name: string;
@@ -40,7 +41,7 @@ export function MeetingForm({
     <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-6">
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-          Meeting Title
+          {translations.meetingForm.title}
         </label>
         <input
           type="text"
@@ -54,7 +55,7 @@ export function MeetingForm({
 
       <div>
         <label htmlFor="context" className="block text-sm font-medium text-gray-700">
-          Business Context
+          {translations.meetingForm.context}
         </label>
         <textarea
           id="context"
@@ -68,13 +69,13 @@ export function MeetingForm({
 
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900">Participants</h3>
+          <h3 className="text-lg font-medium text-gray-900">{translations.meetingForm.participants.title}</h3>
           <button
             type="button"
             onClick={addParticipant}
             className="text-sm text-blue-600 hover:text-blue-500"
           >
-            Add Participant
+            {translations.meetingForm.participants.addParticipant}
           </button>
         </div>
 
@@ -82,7 +83,7 @@ export function MeetingForm({
           <div key={index} className="flex gap-4">
             <input
               type="text"
-              placeholder="Name"
+              placeholder={translations.meetingForm.participants.name}
               value={participant.name}
               onChange={(e) => updateParticipant(index, 'name', e.target.value)}
               className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -90,7 +91,7 @@ export function MeetingForm({
             />
             <input
               type="text"
-              placeholder="Position"
+              placeholder={translations.meetingForm.participants.position}
               value={participant.position}
               onChange={(e) => updateParticipant(index, 'position', e.target.value)}
               className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -109,7 +110,7 @@ export function MeetingForm({
             : 'bg-blue-600 hover:bg-blue-700'
         }`}
       >
-        {isProcessing ? 'Processing...' : 'Process Meeting'}
+        {isProcessing ? translations.meetingForm.submit.processing : translations.meetingForm.submit.process}
       </button>
     </form>
   );

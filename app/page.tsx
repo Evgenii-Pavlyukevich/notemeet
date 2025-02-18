@@ -1,5 +1,6 @@
 'use client';
 
+import { translations } from '@/lib/translations';
 import { FileUpload } from '@/components/FileUpload';
 import { MeetingForm } from '@/components/MeetingForm';
 import { Results } from '@/components/Results';
@@ -14,7 +15,7 @@ export default function Home() {
     <QueryClientProvider client={queryClient}>
       <main className="min-h-screen p-4 md:p-8 bg-gray-50">
         <div className="max-w-4xl mx-auto space-y-8">
-          <h1 className="text-3xl font-bold text-gray-900">VideoNotes</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{translations.title}</h1>
           <MeetingProcessor />
         </div>
         <Toaster position="bottom-right" />

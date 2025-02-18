@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import toast from 'react-hot-toast';
+import { translations } from '@/lib/translations';
 
 const ALLOWED_TYPES = ['audio/mpeg', 'audio/mp4', 'audio/wav', 'video/mp4', 'video/webm'];
 const MAX_SIZE = 25 * 1024 * 1024; // 25MB
@@ -14,15 +15,15 @@ export function FileUpload({ file, onFileChange }: FileUploadProps) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!ALLOWED_TYPES.includes(file.type)) {
-      toast.error('Unsupported file type');
+      toast.error(translations.fileUpload.errors.unsupportedType);
       return;
     }
     if (file.size > MAX_SIZE) {
-      toast.error('File size exceeds 25MB limit');
+      toast.error(translations.fileUpload.errors.sizeLimit);
       return;
     }
     onFileChange(file);
-    toast.success('File uploaded successfully');
+    toast.success(translations.fileUpload.errors.uploadSuccess);
   }, [onFileChange]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -43,10 +44,10 @@ export function FileUpload({ file, onFileChange }: FileUploadProps) {
       <input {...getInputProps()} />
       <div className="space-y-2">
         <p className="text-gray-600">
-          {file ? file.name : 'Drag and drop your audio/video file here, or click to select'}
+          {file ? `${translations.fileUpload.selectedFile} ${file.name}` : translations.fileUpload.dragAndDrop}
         </p>
         <p className="text-sm text-gray-500">
-          Supported formats: MP3, MP4, WAV, M4A, WebM (max 25MB)
+          {translations.fileUpload.supportedFormats}
         </p>
       </div>
     </div>

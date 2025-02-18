@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { translations } from '@/lib/translations';
 
 interface ResultsProps {
   transcription?: string;
@@ -13,10 +14,10 @@ export function Results({ transcription, summary, decisions, actionItems, follow
   const [activeTab, setActiveTab] = useState('transcription');
 
   const tabs = [
-    { id: 'transcription', label: 'Transcription' },
-    { id: 'summary', label: 'Summary' },
-    { id: 'decisions', label: 'Key Decisions' },
-    { id: 'actions', label: 'Action Items' },
+    { id: 'transcription', label: translations.results.tabs.transcription },
+    { id: 'summary', label: translations.results.tabs.summary },
+    { id: 'decisions', label: translations.results.tabs.decisions },
+    { id: 'actions', label: translations.results.tabs.actions },
   ];
 
   return (
@@ -42,13 +43,13 @@ export function Results({ transcription, summary, decisions, actionItems, follow
       <div className="p-6">
         {activeTab === 'transcription' && (
           <div className="prose max-w-none">
-            <p className="whitespace-pre-wrap">{transcription || 'No transcription available'}</p>
+            <p className="whitespace-pre-wrap">{transcription || translations.results.noData.transcription}</p>
           </div>
         )}
 
         {activeTab === 'summary' && (
           <div className="prose max-w-none">
-            <p>{summary || 'No summary available'}</p>
+            <p>{summary || translations.results.noData.summary}</p>
           </div>
         )}
 
@@ -61,7 +62,7 @@ export function Results({ transcription, summary, decisions, actionItems, follow
                 </span>
                 <span className="ml-3">{decision}</span>
               </li>
-            )) || <p>No decisions recorded</p>}
+            )) || <p>{translations.results.noData.decisions}</p>}
           </ul>
         )}
 
@@ -74,7 +75,7 @@ export function Results({ transcription, summary, decisions, actionItems, follow
                 </span>
                 <span className="ml-3">{item}</span>
               </li>
-            )) || <p>No action items recorded</p>}
+            )) || <p>{translations.results.noData.actions}</p>}
           </ul>
         )}
       </div>
