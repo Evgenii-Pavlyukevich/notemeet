@@ -61,7 +61,12 @@ export async function POST(request: Request) {
       response_format: { type: 'json_object' },
     });
 
-    const analysis = JSON.parse(analysisResponse.choices[0].message.content);
+    const content = analysisResponse.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('Failed to get analysis from OpenAI');
+    }
+
+    const analysis = JSON.parse(content);
 
     return NextResponse.json({
       transcription,
