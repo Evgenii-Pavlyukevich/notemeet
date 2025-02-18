@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['notemeet.vercel.app'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'notemeet.vercel.app',
+      },
+    ],
+    unoptimized: true,
   },
 };
 

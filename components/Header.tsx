@@ -21,25 +21,17 @@ const HeaderContent = styled.div`
 
 const LogoContainer = styled.div`
   position: relative;
+  width: 105px;
   height: 32px;
 
   @media (min-width: 768px) {
+    width: 130px;
     height: 40px;
   }
 `;
 
-const MobileLogo = styled(Image)`
-  display: block;
-  @media (min-width: 768px) {
-    display: none;
-  }
-`;
-
-const DesktopLogo = styled(Image)`
-  display: none;
-  @media (min-width: 768px) {
-    display: block;
-  }
+const StyledImage = styled(Image)`
+  object-fit: contain;
 `;
 
 const Header = () => {
@@ -47,20 +39,19 @@ const Header = () => {
     <HeaderContainer>
       <HeaderContent>
         <LogoContainer>
-          <MobileLogo
-            src="/Group 30.png"
-            alt="VideoNotes Logo"
-            width={105}
-            height={32}
-            priority
-          />
-          <DesktopLogo
-            src="/Logo.png"
-            alt="VideoNotes Logo"
-            width={130}
-            height={40}
-            priority
-          />
+          <picture>
+            <source
+              media="(min-width: 768px)"
+              srcSet="/Logo.png"
+            />
+            <StyledImage
+              src="/Group 30.png"
+              alt="VideoNotes Logo"
+              fill
+              priority
+              sizes="(min-width: 768px) 130px, 105px"
+            />
+          </picture>
         </LogoContainer>
       </HeaderContent>
     </HeaderContainer>
