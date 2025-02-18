@@ -44,7 +44,7 @@ const transcribeAudio = async (file: File): Promise<{ text: string }> => {
       file: file,
       model: 'whisper-1',
       response_format: 'text',
-    });
+    }) as unknown as string;
 
     return { text: response };
   } catch (error) {
