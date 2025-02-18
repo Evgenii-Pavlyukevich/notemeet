@@ -1,9 +1,5 @@
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-});
-
 export interface MeetingData {
   title: string;
   context: string;
@@ -27,7 +23,7 @@ export async function processMeeting(data: MeetingData): Promise<MeetingResults>
   formData.append('context', data.context);
   formData.append('participants', JSON.stringify(data.participants));
 
-  const response = await api.post<MeetingResults>('/api/process', formData, {
+  const response = await axios.post<MeetingResults>('/api/process', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
