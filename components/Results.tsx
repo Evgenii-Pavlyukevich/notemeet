@@ -1,5 +1,143 @@
 import { useState } from 'react';
 import { translations } from '@/lib/translations';
+import styled from 'styled-components';
+
+const ResultsContainer = styled.div`
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+`;
+
+const TabsContainer = styled.nav`
+  display: flex;
+  overflow-x: auto;
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.5rem;
+  gap: 0.5rem;
+
+  @media (min-width: 768px) {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  &::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+  }
+`;
+
+const Tab = styled.button<{ isActive: boolean }>`
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background: ${props => props.isActive ? 'black' : 'transparent'};
+  color: ${props => props.isActive ? 'white' : 'var(--text-primary)'};
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${props => props.isActive ? 'black' : 'rgba(0, 0, 0, 0.05)'};
+  }
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+const ContentSection = styled.div`
+  padding: 1.5rem;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+`;
+
+const TranscriptionText = styled.p`
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+const SummaryText = styled.p`
+  line-height: 1.6;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+const List = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const ListItem = styled.li`
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f3f5;
+    transform: translateX(4px);
+  }
+`;
+
+const ItemNumber = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: black;
+  color: white;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  flex-shrink: 0;
+`;
+
+const ItemText = styled.span`
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  flex: 1;
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+const EmptyState = styled.p`
+  text-align: center;
+  color: var(--placeholder-color);
+  font-size: 0.875rem;
+  padding: 2rem;
+
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
+`;
 
 interface ResultsProps {
   transcription?: string;
@@ -10,7 +148,14 @@ interface ResultsProps {
   deadlines?: string[];
 }
 
-export function Results({ transcription, summary, decisions, actionItems, followUps, deadlines }: ResultsProps) {
+export function Results({
+  transcription,
+  summary,
+  decisions,
+  actionItems,
+  followUps,
+  deadlines,
+}: ResultsProps) {
   const [activeTab, setActiveTab] = useState('transcription');
 
   const tabs = [
@@ -20,73 +165,58 @@ export function Results({ transcription, summary, decisions, actionItems, follow
     { id: 'actions', label: translations.results.tabs.actions },
   ];
 
-  return (
-    <div className="notion-card">
-      <div className="notion-tabs">
-        <nav className="flex">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`notion-tab ${activeTab === tab.id ? 'notion-tab-active' : ''}`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
+  const renderList = (items: string[] | undefined, emptyMessage: string) => {
+    if (!items?.length) {
+      return <EmptyState>{emptyMessage}</EmptyState>;
+    }
 
-      <div className="p-6">
+    return (
+      <List>
+        {items.map((item, index) => (
+          <ListItem key={index}>
+            <ItemNumber>{index + 1}</ItemNumber>
+            <ItemText>{item}</ItemText>
+          </ListItem>
+        ))}
+      </List>
+    );
+  };
+
+  return (
+    <ResultsContainer>
+      <TabsContainer>
+        {tabs.map((tab) => (
+          <Tab
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            isActive={activeTab === tab.id}
+          >
+            {tab.label}
+          </Tab>
+        ))}
+      </TabsContainer>
+
+      <ContentSection>
         {activeTab === 'transcription' && (
-          <div className="notion-block">
-            <p className="whitespace-pre-wrap">{transcription || translations.results.noData.transcription}</p>
-          </div>
+          <TranscriptionText>
+            {transcription || translations.results.noData.transcription}
+          </TranscriptionText>
         )}
 
         {activeTab === 'summary' && (
-          <div className="notion-block">
-            <p>{summary || translations.results.noData.summary}</p>
-          </div>
+          <SummaryText>
+            {summary || translations.results.noData.summary}
+          </SummaryText>
         )}
 
         {activeTab === 'decisions' && (
-          <div className="notion-block">
-            {decisions?.length ? (
-              <ul className="space-y-2">
-                {decisions.map((decision, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-hover-bg text-text-primary">
-                      {index + 1}
-                    </span>
-                    <span>{decision}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="opacity-60">{translations.results.noData.decisions}</p>
-            )}
-          </div>
+          renderList(decisions, translations.results.noData.decisions)
         )}
 
         {activeTab === 'actions' && (
-          <div className="notion-block">
-            {actionItems?.length ? (
-              <ul className="space-y-4">
-                {actionItems.map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-hover-bg text-text-primary">
-                      {index + 1}
-                    </span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="opacity-60">{translations.results.noData.actions}</p>
-            )}
-          </div>
+          renderList(actionItems, translations.results.noData.actions)
         )}
-      </div>
-    </div>
+      </ContentSection>
+    </ResultsContainer>
   );
 } 
