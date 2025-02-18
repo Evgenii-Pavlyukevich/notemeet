@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import { VALID_MIME_TYPES, MAX_FILE_SIZE, MOCK_TRANSCRIPTION, MOCK_ANALYSIS } from './constants';
-import { meetingAnalysisSchema } from './types';
+import { meetingAnalysisSchema, MeetingAnalysis, MeetingResult } from './types';
 import { Transcription } from 'openai/resources/audio/transcriptions.mjs';
 
 const openai = createOpenAI({
@@ -32,11 +32,11 @@ export const validateFile = (file: File) => {
   }
 };
 
-const transcribeAudio = async (file: File): Promise<Transcription> => {
+const transcribeAudio = async (file: File): Promise<{ text: string }> => {
   if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
     console.log('DEBUG MODE IS ON');
     return new Promise((res) =>
-      setTimeout(() => res({ text: MOCK_TRANSCRIPTION } as Transcription), 1000)
+      setTimeout(() => res({ text: MOCK_TRANSCRIPTION }), 1000)
     );
   }
 
@@ -46,18 +46,18 @@ const transcribeAudio = async (file: File): Promise<Transcription> => {
     response_format: 'srt',
   });
 
-  return response;
+  return { text: response };
 };
 
 const analyzeMeeting = async (
-  transcription: Transcription,
+  transcription: { text: string },
   title: string,
   context: string,
   participants: { name: string; position: string }[]
-) => {
+): Promise<MeetingAnalysis> => {
   if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
     console.log('DEBUG MODE IS ON');
-    return new Promise((res) => setTimeout(() => res(MOCK_ANALYSIS), 1000));
+    return new Promise((res) => setTimeout(() => res(MOCK_ANALYSIS as MeetingAnalysis), 1000));
   }
 
   const analysisPrompt = `
@@ -65,9 +65,7 @@ const analyzeMeeting = async (
     Business Context: ${context}
     Participants: ${participants.map((p) => `${p.name} (${p.position})`).join(', ')}
     
-    Transcription: ${
-      typeof transcription === 'string' ? transcription : transcription.text
-    }
+    Transcription: ${transcription.text}
     
     Please analyze this meeting and provide:
     1. A brief summary
@@ -93,7 +91,7 @@ const analyzeMeeting = async (
     ],
   });
 
-  return object;
+  return object as MeetingAnalysis;
 };
 
 export const generateResponse = async (
@@ -101,15 +99,19 @@ export const generateResponse = async (
   title: string,
   context: string,
   participants: { name: string; position: string }[]
-) => {
+): Promise<MeetingResult> => {
   const transcribedAudio = await transcribeAudio(file);
   console.log('🚀 ~ generateResponse ~ transcribedAudio:', transcribedAudio);
 
-  const analysis = await analyzeMeeting(transcribedAudio, title, context, participants);
+  const analysis: MeetingAnalysis = await analyzeMeeting(transcribedAudio, title, context, participants);
   console.log('🚀 ~ generateResponse ~ analysis:', analysis);
 
   return {
-    transcription: typeof transcribedAudio === 'string' ? transcribedAudio : transcribedAudio.text,
-    ...analysis,
+    transcription: transcribedAudio.text,
+    summary: analysis.summary,
+    decisions: analysis.decisions,
+    actionItems: analysis.actionItems,
+    followUps: analysis.followUps,
+    deadlines: analysis.deadlines,
   };
 }; 
