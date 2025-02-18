@@ -25,13 +25,25 @@ const LogoContainer = styled.div`
   height: 32px;
 
   @media (min-width: 768px) {
-    width: 130px;
+    width: 200px;
     height: 40px;
   }
 `;
 
-const StyledImage = styled(Image)`
+const MobileLogo = styled(Image)`
   object-fit: contain;
+  display: block;
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+const DesktopLogo = styled(Image)`
+  object-fit: contain;
+  display: none;
+  @media (min-width: 768px) {
+    display: block;
+  }
 `;
 
 const Header = () => {
@@ -39,12 +51,19 @@ const Header = () => {
     <HeaderContainer>
       <HeaderContent>
         <LogoContainer>
-          <StyledImage
+          <MobileLogo
             src="/Group 30.png"
             alt="VideoNotes Logo"
             fill
             priority
-            sizes="(min-width: 768px) 130px, 105px"
+            sizes="105px"
+          />
+          <DesktopLogo
+            src="/Logo.png"
+            alt="VideoNotes Logo"
+            fill
+            priority
+            sizes="200px"
           />
         </LogoContainer>
       </HeaderContent>
