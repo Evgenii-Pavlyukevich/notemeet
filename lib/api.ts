@@ -23,11 +23,19 @@ export async function processMeeting(data: MeetingData): Promise<MeetingResults>
   formData.append('context', data.context);
   formData.append('participants', JSON.stringify(data.participants));
 
-  const response = await axios.post<MeetingResults>('/api/process', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  try {
+    const response = await axios.post<MeetingResults>('/api/process', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      timeout: 30000, // 30 seconds timeout
+    });
 
-  return response.data;
+    return response.data;
+  } catch (error: any) {
+    if (error.code === 'ECONNABORTED' || error.response?.status === 504) {
+      throw new Error('Request timed out. The file might be too large or the server is busy. Please try again.');
+    }
+    throw error;
+  }
 } 

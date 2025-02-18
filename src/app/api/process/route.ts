@@ -1,25 +1,39 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+export const runtime = 'edge';
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const title = formData.get('title') as string;
-    const context = formData.get('context') as string;
-    const participants = JSON.parse(formData.get('participants') as string);
-
     if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not configured');
+      return NextResponse.json(
+        { error: 'OpenAI API key not configured' },
+        { status: 500 }
+      );
     }
+
+    const formData = await request.formData();
+    const file = formData.get('file');
+    const title = formData.get('title');
+    const context = formData.get('context');
+    const participantsStr = formData.get('participants');
+
+    if (!file || !title || !context || !participantsStr) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    const participants = JSON.parse(participantsStr as string);
 
     // Convert audio to text using Whisper
     const transcriptionResponse = await openai.audio.transcriptions.create({
-      file: file,
+      file: file as any,
       model: 'whisper-1',
     });
 
@@ -63,7 +77,10 @@ export async function POST(request: Request) {
 
     const content = analysisResponse.choices[0]?.message?.content;
     if (!content) {
-      throw new Error('Failed to get analysis from OpenAI');
+      return NextResponse.json(
+        { error: 'Failed to get analysis from OpenAI' },
+        { status: 500 }
+      );
     }
 
     const analysis = JSON.parse(content);
@@ -72,10 +89,10 @@ export async function POST(request: Request) {
       transcription,
       ...analysis,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Processing error:', error);
     return NextResponse.json(
-      { error: 'Failed to process meeting recording' },
+      { error: error.message || 'Failed to process meeting recording' },
       { status: 500 }
     );
   }
