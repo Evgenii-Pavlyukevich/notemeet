@@ -13,12 +13,23 @@ const queryClient = new QueryClient();
 export default function Home() {
   return (
     <QueryClientProvider client={queryClient}>
-      <main className="min-h-screen p-4 md:p-8 bg-gray-50">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <h1 className="text-3xl font-bold text-gray-900">{translations.title}</h1>
+      <main className="min-h-screen bg-bg-color">
+        <div className="max-w-5xl mx-auto px-4 py-8 md:px-8 md:py-12">
+          <div className="notion-block mb-8">
+            <h1 className="text-text-primary">{translations.title}</h1>
+          </div>
           <MeetingProcessor />
         </div>
-        <Toaster position="bottom-right" />
+        <Toaster 
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: 'var(--bg-color)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-color)',
+            },
+          }}
+        />
       </main>
     </QueryClientProvider>
   );

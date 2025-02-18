@@ -21,18 +21,14 @@ export function Results({ transcription, summary, decisions, actionItems, follow
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="border-b border-gray-200">
-        <nav className="flex -mb-px">
+    <div className="notion-card">
+      <div className="notion-tabs">
+        <nav className="flex">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-4 px-6 text-sm font-medium border-b-2 ${
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              className={`notion-tab ${activeTab === tab.id ? 'notion-tab-active' : ''}`}
             >
               {tab.label}
             </button>
@@ -42,41 +38,53 @@ export function Results({ transcription, summary, decisions, actionItems, follow
 
       <div className="p-6">
         {activeTab === 'transcription' && (
-          <div className="prose max-w-none">
+          <div className="notion-block">
             <p className="whitespace-pre-wrap">{transcription || translations.results.noData.transcription}</p>
           </div>
         )}
 
         {activeTab === 'summary' && (
-          <div className="prose max-w-none">
+          <div className="notion-block">
             <p>{summary || translations.results.noData.summary}</p>
           </div>
         )}
 
         {activeTab === 'decisions' && (
-          <ul className="space-y-2">
-            {decisions?.map((decision, index) => (
-              <li key={index} className="flex items-start">
-                <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                  {index + 1}
-                </span>
-                <span className="ml-3">{decision}</span>
-              </li>
-            )) || <p>{translations.results.noData.decisions}</p>}
-          </ul>
+          <div className="notion-block">
+            {decisions?.length ? (
+              <ul className="space-y-2">
+                {decisions.map((decision, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-hover-bg text-text-primary">
+                      {index + 1}
+                    </span>
+                    <span>{decision}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="opacity-60">{translations.results.noData.decisions}</p>
+            )}
+          </div>
         )}
 
         {activeTab === 'actions' && (
-          <ul className="space-y-4">
-            {actionItems?.map((item, index) => (
-              <li key={index} className="flex items-start">
-                <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-green-100 text-green-600">
-                  {index + 1}
-                </span>
-                <span className="ml-3">{item}</span>
-              </li>
-            )) || <p>{translations.results.noData.actions}</p>}
-          </ul>
+          <div className="notion-block">
+            {actionItems?.length ? (
+              <ul className="space-y-4">
+                {actionItems.map((item, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-hover-bg text-text-primary">
+                      {index + 1}
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="opacity-60">{translations.results.noData.actions}</p>
+            )}
+          </div>
         )}
       </div>
     </div>

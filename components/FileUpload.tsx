@@ -36,19 +36,21 @@ export function FileUpload({ file, onFileChange }: FileUploadProps) {
   });
 
   return (
-    <div
-      {...getRootProps()}
-      className={`p-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors
-        ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}`}
-    >
-      <input {...getInputProps()} />
-      <div className="space-y-2">
-        <p className="text-gray-600">
-          {file ? `${translations.fileUpload.selectedFile} ${file.name}` : translations.fileUpload.dragAndDrop}
-        </p>
-        <p className="text-sm text-gray-500">
-          {translations.fileUpload.supportedFormats}
-        </p>
+    <div className="notion-card p-6">
+      <div
+        {...getRootProps()}
+        className={`notion-block cursor-pointer transition-all duration-150 ease-out
+          ${isDragActive ? 'border-2 border-dashed border-accent-blue bg-hover-bg' : ''}`}
+      >
+        <input {...getInputProps()} />
+        <div className="space-y-2">
+          <p className="text-text-primary">
+            {file ? `${translations.fileUpload.selectedFile} ${file.name}` : translations.fileUpload.dragAndDrop}
+          </p>
+          <p className="text-sm opacity-60">
+            {translations.fileUpload.supportedFormats}
+          </p>
+        </div>
       </div>
     </div>
   );
