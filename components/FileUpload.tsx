@@ -7,11 +7,6 @@ import styled from 'styled-components';
 const ALLOWED_TYPES = ['audio/mpeg', 'audio/mp4', 'audio/wav', 'video/mp4', 'video/webm'];
 const MAX_SIZE = 25 * 1024 * 1024; // 25MB
 
-interface FileUploadProps {
-  file: File | null;
-  onFileChange: (file: File | null) => void;
-}
-
 const UploadArea = styled.div<{ isDragActive: boolean }>`
   border: 2px dashed ${props => props.isDragActive ? '#000' : '#ccc'};
   border-radius: 8px;
@@ -20,6 +15,7 @@ const UploadArea = styled.div<{ isDragActive: boolean }>`
   background: ${props => props.isDragActive ? 'var(--hover-bg)' : '#fafafa'};
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-bottom: 1.5rem;
 
   &:hover {
     border-color: #666;
@@ -32,15 +28,14 @@ const UploadArea = styled.div<{ isDragActive: boolean }>`
 `;
 
 const UploadIcon = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   margin: 0 auto 1rem;
   opacity: 0.5;
 
   @media (min-width: 768px) {
     width: 48px;
     height: 48px;
-    margin-bottom: 1.5rem;
   }
 
   svg {
@@ -52,22 +47,26 @@ const UploadIcon = styled.div`
 const UploadText = styled.p`
   color: var(--text-primary);
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 
   @media (min-width: 768px) {
     font-size: 1rem;
-    margin-bottom: 0.75rem;
   }
 `;
 
 const UploadSubtext = styled.p`
   color: var(--placeholder-color);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 
   @media (min-width: 768px) {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
   }
 `;
+
+interface FileUploadProps {
+  file: File | null;
+  onFileChange: (file: File | null) => void;
+}
 
 export function FileUpload({ file, onFileChange }: FileUploadProps) {
   const onDrop = useCallback((acceptedFiles: File[]) => {

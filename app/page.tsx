@@ -14,8 +14,9 @@ const queryClient = new QueryClient();
 
 const MainContent = styled.div`
   width: 100%;
-  padding: 1rem;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 1rem;
   padding-top: 6rem;
 
   @media (min-width: 768px) {
@@ -25,44 +26,38 @@ const MainContent = styled.div`
   }
 `;
 
-const Title = styled.h1`
+const PageTitle = styled.h1`
   font-size: 1.5rem;
+  line-height: 2rem;
   font-weight: 600;
   text-align: center;
   margin-bottom: 1.5rem;
-  line-height: 1.4;
 
   @media (min-width: 768px) {
-    font-size: 1.75rem;
-    margin-bottom: 2rem;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
   }
 `;
 
 const Description = styled.p`
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  font-size: 0.875rem;
 
   @media (min-width: 768px) {
     font-size: 1rem;
-    margin-bottom: 2rem;
   }
 `;
 
 const FeatureList = styled.ul`
   list-style-type: disc;
-  padding-left: 1.5rem;
+  padding-left: 2rem;
   margin-bottom: 2rem;
-  font-size: 0.9rem;
+  space-y: 0.5rem;
+  font-size: 0.875rem;
 
   @media (min-width: 768px) {
     font-size: 1rem;
-    padding-left: 2rem;
-    margin-bottom: 2.5rem;
-  }
-
-  li {
-    margin-bottom: 0.5rem;
   }
 `;
 
@@ -72,9 +67,9 @@ export default function Home() {
       <main className="min-h-screen bg-white">
         <Header />
         <MainContent>
-          <Title>
+          <PageTitle>
             Автоматизация, расшифровка, обобщение и постановка задач из видео-конференций
-          </Title>
+          </PageTitle>
           <Description>
             Прикрепите файл видео-конференции и нажмите "Обработать".<br />
             Через пару минут Вы получите:
@@ -102,17 +97,11 @@ export default function Home() {
   );
 }
 
-const ProcessorContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-`;
-
 function MeetingProcessor() {
   const meeting = useMeeting();
 
   return (
-    <ProcessorContainer>
+    <div className="space-y-8">
       <FileUpload file={meeting.file} onFileChange={meeting.setFile} />
       <MeetingForm
         title={meeting.title}
@@ -125,6 +114,6 @@ function MeetingProcessor() {
         isProcessing={meeting.isProcessing}
       />
       {meeting.results && <Results {...meeting.results} />}
-    </ProcessorContainer>
+    </div>
   );
 } 
