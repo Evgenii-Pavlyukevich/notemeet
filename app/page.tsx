@@ -1,3 +1,5 @@
+'use client';
+
 import { FileUpload } from '@/components/FileUpload';
 import { MeetingForm } from '@/components/MeetingForm';
 import { Results } from '@/components/Results';
