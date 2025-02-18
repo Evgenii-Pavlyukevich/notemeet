@@ -7,6 +7,7 @@ import { Results } from '@/components/Results';
 import { useMeeting } from '@/hooks/useMeeting';
 import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Header from '@/components/Header';
 
 const queryClient = new QueryClient();
 
@@ -14,7 +15,8 @@ export default function Home() {
   return (
     <QueryClientProvider client={queryClient}>
       <main className="min-h-screen bg-white">
-        <div className="max-w-xl mx-auto px-4 py-8">
+        <Header />
+        <div className="max-w-xl mx-auto px-4 py-8 pt-24">
           <h1>Автоматизация, расшифровка, обобщение и постановка задач из видео-конференций</h1>
           <p className="text-center mb-8">
             Прикрепите файл видео-конференции и нажмите "Обработать".<br />
