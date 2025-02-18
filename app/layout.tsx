@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin'] });
+import StyledComponentsRegistry from './registry';
 
 export const metadata: Metadata = {
-  title: 'VideoNotes - Meeting Analysis',
-  description: 'Transform your video and audio meetings into actionable insights',
+  title: 'VideoNotes',
+  description: 'Автоматизация, расшифровка, обобщение и постановка задач из видео-конференций',
 };
 
 export default function RootLayout({
@@ -15,8 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="ru">
+      <body>
+        <StyledComponentsRegistry>
+          {children}
+        </StyledComponentsRegistry>
+      </body>
     </html>
   );
 } 
