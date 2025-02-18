@@ -5,7 +5,6 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import { VALID_MIME_TYPES, MAX_FILE_SIZE, MOCK_TRANSCRIPTION, MOCK_ANALYSIS } from './constants';
 import { meetingAnalysisSchema, MeetingAnalysis, MeetingResult } from './types';
-import { Transcription } from 'openai/resources/audio/transcriptions.mjs';
 
 const openai = createOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -40,13 +39,18 @@ const transcribeAudio = async (file: File): Promise<{ text: string }> => {
     );
   }
 
-  const response = await client.audio.transcriptions.create({
-    file: file,
-    model: 'whisper-1',
-    response_format: 'srt',
-  });
+  try {
+    const response = await client.audio.transcriptions.create({
+      file: file,
+      model: 'whisper-1',
+      response_format: 'text',
+    });
 
-  return { text: response };
+    return { text: response };
+  } catch (error) {
+    console.error('Transcription error:', error);
+    throw new Error('Failed to transcribe audio');
+  }
 };
 
 const analyzeMeeting = async (
