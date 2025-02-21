@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { validateFile, generateResponse } from '@/lib/server.utils';
+import { getLargeFile, cleanupExpiredFiles } from '@/lib/supabase';
 
 export const maxDuration = 60; // Reduced from 300 to 60 seconds
 
@@ -13,16 +14,29 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    let file = formData.get('file') as File;
     const title = formData.get('title') as string;
     const context = formData.get('context') as string;
     const participantsStr = formData.get('participants') as string;
+    const supabaseRef = formData.get('supabaseRef') as string;
 
     if (!file || !title || !context || !participantsStr) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+
+    // If this is a large file, get it from Supabase
+    if (supabaseRef) {
+      const largeFile = await getLargeFile(supabaseRef);
+      if (!largeFile) {
+        return NextResponse.json(
+          { error: 'Large file not found or expired' },
+          { status: 404 }
+        );
+      }
+      file = new File([largeFile], file.name, { type: file.type });
     }
 
     // Validate file
@@ -33,6 +47,9 @@ export async function POST(request: Request) {
 
     const participants = JSON.parse(participantsStr);
     const result = await generateResponse(file, title, context, participants);
+
+    // Clean up expired files in the background
+    cleanupExpiredFiles().catch(console.error);
 
     return NextResponse.json(result);
   } catch (error: any) {
