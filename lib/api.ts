@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Task } from './types';
 
 export interface MeetingData {
   title: string;
@@ -11,7 +12,7 @@ export interface MeetingResults {
   transcription: string;
   summary: string;
   decisions: string[];
-  actionItems: string[];
+  actionItems: Task[];
   followUps: string[];
   deadlines: string[];
 }
