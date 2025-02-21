@@ -16,12 +16,18 @@ export interface MeetingResults {
   deadlines: string[];
 }
 
-export async function processMeeting(data: MeetingData): Promise<MeetingResults> {
-  const formData = new FormData();
-  formData.append('file', data.file);
-  formData.append('title', data.title);
-  formData.append('context', data.context);
-  formData.append('participants', JSON.stringify(data.participants));
+export async function processMeeting(data: FormData | MeetingData): Promise<MeetingResults> {
+  let formData: FormData;
+  
+  if (!(data instanceof FormData)) {
+    formData = new FormData();
+    formData.append('file', data.file);
+    formData.append('title', data.title);
+    formData.append('context', data.context);
+    formData.append('participants', JSON.stringify(data.participants));
+  } else {
+    formData = data;
+  }
 
   try {
     const response = await axios.post<MeetingResults>('/api/process', formData, {
