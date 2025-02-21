@@ -3,9 +3,11 @@ import { useDropzone } from 'react-dropzone';
 import toast from 'react-hot-toast';
 import { translations } from '@/lib/translations';
 import styled from 'styled-components';
+import { uploadLargeFile } from '@/lib/supabase';
 
 const ALLOWED_TYPES = ['audio/mpeg', 'audio/mp4', 'audio/wav', 'video/mp4', 'video/webm'];
 const MAX_SIZE = 25 * 1024 * 1024; // 25MB
+const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024; // 50MB
 
 const UploadArea = styled.div<{ isDragActive: boolean }>`
   border: 2px dashed ${props => props.isDragActive ? '#000' : '#ccc'};
@@ -69,18 +71,41 @@ interface FileUploadProps {
 }
 
 export function FileUpload({ file, onFileChange }: FileUploadProps) {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!ALLOWED_TYPES.includes(file.type)) {
       toast.error(translations.fileUpload.errors.unsupportedType);
       return;
     }
-    if (file.size > MAX_SIZE) {
-      toast.error(translations.fileUpload.errors.sizeLimit);
-      return;
+
+    try {
+      if (file.size > LARGE_FILE_THRESHOLD) {
+        // For large files, upload to Supabase first
+        const fileName = await uploadLargeFile(file);
+        // Create a new File object with the same properties but smaller size
+        const tempFile = new File(
+          [new Blob(['temp_file'])],
+          file.name,
+          { type: file.type }
+        );
+        // Store the Supabase reference in a custom property
+        Object.defineProperty(tempFile, 'supabaseRef', {
+          value: fileName,
+          writable: false
+        });
+        onFileChange(tempFile);
+      } else if (file.size > MAX_SIZE) {
+        toast.error(translations.fileUpload.errors.sizeLimit);
+        return;
+      } else {
+        onFileChange(file);
+      }
+      toast.success(translations.fileUpload.errors.uploadSuccess);
+    } catch (error) {
+      console.error('File upload error:', error);
+      toast.error('Failed to upload large file');
+      onFileChange(null);
     }
-    onFileChange(file);
-    toast.success(translations.fileUpload.errors.uploadSuccess);
   }, [onFileChange]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
