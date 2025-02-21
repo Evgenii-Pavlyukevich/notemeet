@@ -21,7 +21,22 @@ Today we'll discuss the project timeline and next steps.`;
 export const MOCK_ANALYSIS = {
   summary: 'Weekly meeting discussing project timeline and next steps.',
   decisions: ['Proceed with the current plan'],
-  actionItems: ['Review timeline', 'Prepare documentation'],
+  actionItems: [
+    {
+      text: 'Review timeline',
+      assignee: {
+        name: 'John Doe',
+        position: 'Project Manager'
+      }
+    },
+    {
+      text: 'Prepare documentation',
+      assignee: {
+        name: 'Jane Smith',
+        position: 'Technical Writer'
+      }
+    }
+  ],
   followUps: ['Schedule follow-up meeting next week'],
   deadlines: ['Documentation due by end of week'],
 }; 
