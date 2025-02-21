@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import { VALID_MIME_TYPES, MAX_FILE_SIZE, MOCK_TRANSCRIPTION, MOCK_ANALYSIS } from './constants';
-import { meetingAnalysisSchema, MeetingAnalysis, MeetingResult } from './types';
+import { meetingAnalysisSchema, MeetingAnalysis, MeetingResult, Task } from './types';
 
 const openai = createOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -75,9 +75,12 @@ const analyzeMeeting = async (
       Please analyze this meeting and provide:
       1. A brief summary
       2. Key decisions made
-      3. Action items with assigned responsibilities
+      3. Action items with assigned responsibilities (make sure to assign each action item to a specific participant)
       4. Follow-up tasks
       5. Important deadlines mentioned
+
+      For action items, please assign them to specific participants based on their roles and the context of the discussion.
+      Each action item should include the task description and the assigned participant's name and position.
     `;
 
     const { object } = await generateObject({
