@@ -11,7 +11,20 @@ export function useMeeting() {
   const [results, setResults] = useState<MeetingResults | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (data: MeetingData) => processMeeting(data),
+    mutationFn: async (data: MeetingData) => {
+      const formData = new FormData();
+      formData.append('file', data.file);
+      formData.append('title', data.title);
+      formData.append('context', data.context);
+      formData.append('participants', JSON.stringify(data.participants));
+
+      // If this is a large file, add the Supabase reference
+      if ('supabaseRef' in data.file) {
+        formData.append('supabaseRef', (data.file as any).supabaseRef);
+      }
+
+      return processMeeting(formData);
+    },
     onSuccess: (data) => {
       setResults(data);
       toast.success('Meeting processed successfully');
